@@ -1,0 +1,9 @@
+import string
+
+for line in open(0):
+    # print(line.strip().split())
+    idx = line[5]
+    for s in line.split():
+        s = s.translate(str.maketrans('', '', string.punctuation))
+        print(s)
+    

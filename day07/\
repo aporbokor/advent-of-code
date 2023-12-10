@@ -1,0 +1,25 @@
+cards = [line.split() for line in open(0)]
+
+five = four = fullh = three = two = one = high = []
+order = [[] for x in range(6)]
+for c, b in cards:
+    typ = list(set([(c.count(letter), letter) for letter in c if c.count(letter) > 1]))
+    typ.sort(key=lambda x: x[0])
+    # print(typ)
+    if typ[0][0] == 5:
+        order[5].append(c)
+    elif typ[0][0] == 4:
+        order[4].append(c)
+    elif typ[0][0] == 3 and len(typ) == 2:
+        order[3].append(c)
+    elif typ[0][0] == 3:
+        order[2].append(c)
+    elif typ[0][0] == 2:
+        order[2].append(c)
+
+    # for i in range(1, 5):
+        # if typ[0][0] == i:
+            # order[i-1].append(c)
+print(order)
+
+

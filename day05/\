@@ -1,0 +1,138 @@
+m = open(0).read().splitlines()
+rs = []
+rule = []
+first = True
+
+
+# def pruneRanges(n):
+# prune = set()
+# for i in range(len(n) - 1):  # iterate over all ranges
+# n = list(set(n))
+# check = n[i]
+# for j in range(i + 1, len(n)):
+# print("checking ", check, "against", n[j])
+# if len(check) == 1:
+# if check[0] in n[j]:  # if fully contained in range, just delete self
+# print("here")
+# prune.add(check)
+# break
+
+# # if check == n[j]:
+# # prune.add(check)
+# # break;
+# if not check[0] in n[j] or check[-1] in n[j]:
+# print("weird stuff herer")
+# continue
+# if check[0] >= n[j][0]:
+# print("nj before", n[j])
+# n[j] = range(n[j][0], max(check[-1], n[j][-1]) + 1)
+# print("nj after", n[j])
+# prune.add(check)
+# break
+# elif check[-1] <= n[j][-1]:
+# n[j] = range(max(check[0], n[j][0]), n[j][-1] + 1)
+# prune.add(check)
+# break
+# prune.add(check)
+# break
+# for i in n:
+# if i in prune:
+# n.remove(i)
+# return n
+
+
+def f(r):
+    mp = {}
+    for dr, sr, rl in r:
+        mp[range(sr, sr + rl)] = range(dr, dr + rl)
+    n = []
+    print("starting with", rs)
+    print("with ruleset", mp)
+    for x in rs:
+        ok = 0
+        for y in mp.keys():
+            if x[0] in y or x[-1] in y:
+                intersect = range(
+                    max(x[0], y[0]), min(x[-1], y[-1]) + 1
+                )  # intersect cannot map to a range currently existing
+                # NOTE: intersection range gets changed
+                n.append(
+                    range(
+                        mp[y][y.index(intersect[0])], mp[y][y.index(intersect[-1])] + 1
+                    )
+                )
+                print("n after intersect", n)
+                if intersect[0] in x and intersect[-1] in x:  # fully contained
+                    n.append(x[: intersect[0]])
+                    n.append(x[intersect[-1] :])
+                elif intersect[0] in x:
+                    n.append(x[: intersect[0]])
+                else:
+                    n.append(x[intersect[-1] :])
+
+                for i in n:
+                    if len(i) == 0:
+                        n.remove(i)
+                # DEBUG
+                print("using ", y, " -> ", mp[y])
+                print(
+                    "from ",
+                    x,
+                    "to ",
+                    range(
+                        mp[y][y.index(intersect[0])],
+                        mp[y][y.index(intersect[-1])] + 1,
+                    ),
+                )
+                print("n becomes", n)
+                # if x[0] >= intersect[0]: #only rvalue
+                # # print("add rval: ", range(intersect[-1], x[-1] + 1))
+                # n.append(range(intersect[-1], x[-1] + 1))
+                # elif x[-1] <= intersect[-1]:
+                # n.append(range(x[0], intersect[-1] + 1))
+                # elif x[0] != intersect[0] and x[-1] != intersect[-1]:
+                # # print("double stuff!")
+                # n.append(range(x[0], intersect[0] + 1))
+                # n.append(range(intersect[-1], x[-1] + 1))
+
+                # print("n before prune", n)
+
+                # n = pruneRanges(n)
+
+                # print("n after prune", n)
+                # print(list(prune))
+                # remain = mp[y]
+
+                ok = 1
+        if not ok:
+            n.append(x)
+    print(n)
+    print("------------------- returning ", n)
+    return n
+
+
+for x in m:
+    if first:
+        seeds = list(map(int, x.split()[1:]))
+        prev = -1
+        a = []
+        for s in seeds:
+            if prev == -1:
+                prev = s
+            else:
+                a.append(range(prev, s + prev))
+                prev = -1
+        rs = a
+        first = False
+        print(rs)
+    elif x == "":
+        if rule != []:
+            rs = f(rule)
+        rule = []
+
+    elif x[-1] != ":":
+        rule.append(list(map(int, x.split())))
+# run f one last time
+
+print(f(rule))
+print(sorted(f(rule), key=lambda r: r.start)[0][0])
